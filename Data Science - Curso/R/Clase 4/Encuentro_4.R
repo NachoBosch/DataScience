@@ -23,7 +23,7 @@ tidyverse_packages()
 #read.table()
 #read.csv()
 #read.csv2()
-mi_csv<-read.table("C:/Code/DataScience/Data Science - Curso/R/Clase 4/mydata.csv",header=TRUE,dec=".")
+mi_csv<-read.table("./Clase 4/mydata.csv",header=TRUE,sep=",",dec=".")
 print(head(mi_csv))#veo los primeros
 
 #install.packages("readxl")
@@ -31,12 +31,39 @@ library(readxl)
 #read_excel()
 #read_xls()
 #read_xlxs()
-mi_excel <- read_excel("C:/Code/DataScience/Data Science - Curso/R/Clase 4/mydata.xlsx",col_names=TRUE)
+mi_excel <- read_excel("./Clase 4/mydata.xlsx",col_names=TRUE)
 print(head(mi_excel))
 names(mi_excel)
 #write.table(mi_csv,file="mi_csv.csv",row.names=False,sep=',')
 str(mi_excel)
+print(ncol(mi_excel))
 
+#Cambiar el nombre
+names(mi_csv)
+names(mi_csv)[4] <-"TALLA"
+names(mi_csv)
+
+mi_csv2 <- read.csv("./Clase 4/mydata.csv",header=TRUE,sep=",",dec=".")
+names(mi_csv2)[4]<-"TALLA"
+names(mi_csv2)
+
+#Eliminar columna 2 [fila,columna]
+mi_csv2[,2]<-NULL
+names(mi_csv2)
+
+#Recortar columnas [, x:y]
+mi_csv3 <- mi_csv[,2:3]
+names(mi_csv3)
+
+
+
+
+
+
+
+#----------------------------------------------------------------------#
+#----------------------------------------------------------------------#
+#----------------------------------------------------------------------#
 
 
 
