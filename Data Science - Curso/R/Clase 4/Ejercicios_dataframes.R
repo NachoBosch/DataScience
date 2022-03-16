@@ -52,13 +52,37 @@ mi_csv2[,2]<-NULL
 names(mi_csv2)
 
 #Recortar columnas [, x:y]
-mi_csv3 <- mi_csv[,2:3]
+mi_csv3 <- mi_csv[,3:4]
 names(mi_csv3)
 
+#Reordenar variables (columnas)
+mi_csv <- mi_csv[c(2,3,1,4)]
+names(mi_csv)
+
+#Guardar/exportar dataframe
+write.table(mi_csv, file="./Clase 4/mi_csv.txt",sep=",",row.names=TRUE)
 
 
+# Tratamiento de Valores faltantes en los datos----
+
+datos <- read.table("./Clase 4/mydata.csv",header=TRUE,sep=",",dec=".")
+names(datos)[4]<-"TALLA" 
+
+#Para saber cantidad de NA
+sum(is.na(datos))
+
+#Para saber cantida de NA por columnas
+colSums(is.na(datos))
+
+#Para saber donde está ese valor NA en la columna
+which(is.na(datos$TALLA)==TRUE)
+datos$TALLA[16]
+
+#Cambiar tipos de datos
+class(datos$TALLA)<-as.numeric
 
 
+ 
 
 
 #----------------------------------------------------------------------#
