@@ -9,7 +9,36 @@
 # siempre comienza la sesion limpiando los paneles
 rm(list=ls())# Borrar los datos de entorno cargados en memoria 
 
-setwd("C:/ARRAYANES/MUNDO_E") # indica TU de  directorio de trabajo
+#setwd("C:/ARRAYANES/MUNDO_E") # indica TU de  directorio de trabajo
+
+path = getwd()
+print(path)
+setwd(path)
+
+install.packages("tidyverse")
+library(tidyverse)
+tidyverse_packages()
+
+#Importación de datos ----
+#read.table()
+#read.csv()
+#read.csv2()
+mi_csv<-read.table("C:/Code/DataScience/Data Science - Curso/R/Clase 4/mydata.csv",header=TRUE,dec=".")
+print(head(mi_csv))#veo los primeros
+
+#install.packages("readxl")
+library(readxl)
+#read_excel()
+#read_xls()
+#read_xlxs()
+mi_excel <- read_excel("C:/Code/DataScience/Data Science - Curso/R/Clase 4/mydata.xlsx",col_names=TRUE)
+print(head(mi_excel))
+names(mi_excel)
+#write.table(mi_csv,file="mi_csv.csv",row.names=False,sep=',')
+str(mi_excel)
+
+
+
 
 ###
 # trabajar con fechas---------
