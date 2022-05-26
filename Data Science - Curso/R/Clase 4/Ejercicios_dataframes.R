@@ -15,7 +15,7 @@ path = getwd()
 print(path)
 setwd(path)
 
-install.packages("tidyverse")
+#install.packages("tidyverse")
 library(tidyverse)
 tidyverse_packages()
 
@@ -79,26 +79,136 @@ which(is.na(datos$TALLA)==TRUE)
 datos$TALLA[16]
 
 #Cambiar tipos de datos
-class(datos$TALLA)<-as.numeric
+str(datos)
+class(datos$TALLA)
+mean(datos$TALLA)#argument is not numeric or logical: returning NA
+datos$TALLA<-as.numeric(datos$TALLA)
+class(datos$TALLA)
+mean(datos$TALLA)
+mean(datos$TALLA,na.rm=TRUE) #calcula la media sin tener en cuenta los NA
 
+class(datos$SEXO)
+datos$SEXO <- as.factor(datos$SEXO) #Convertimos los datos strings en objetos
+class(datos$SEXO)
+levels(datos$SEXO)#Para saber cuales son las categorías de la variable SEXO
+datos$SEXO <- factor(datos$SEXO, labels=c("M","H"))#cambio las categorías
+levels(datos$SEXO)
+class(datos$SEXO)
 
- 
+#---Dataset IRIS---#
+data(iris)
+names(iris)
+levels(iris$Species)
+str(iris)
 
+#Tuberías %>%
+iris%>%select(Sepal.Length,Sepal.Width)
+select(iris,Sepal.Length,Sepal.Width)
+iris%>%select(-Species)#selecciono todas las variables menos species
+select(iris,1,3) #selecciono por numero de columna
+iris%>%select("Species",everything()) #reordeno el data frame tomando como primera columan "Species"
 
-#----------------------------------------------------------------------#
-#----------------------------------------------------------------------#
-#----------------------------------------------------------------------#
+#Renombrar variables
+iris%>%rename("Especie"="Species","Largo Sepalo"="Sepal.Length","Ancho Sepalo"="Sepal.Width","Largo Petalo"="Petal.Length","Ancho Petalo"="Petal.Width")
+#iris%>%rename("Largo Petalo"="Petal.Length","Ancho Petalo"="Petal.Width")
+iris%>%filter(Species=="versicolor")#filtro especie versicolor
+filter(iris,Species=="setosa")
+filter(iris,Species=="setosa"|Species=="versicolor")
+filter(iris,Species==c("setosa","versicolor"))
 
+#Creación de nuevas variables
+iris%>%
+  mutate(Petal.Shape=Petal.Width/Petal.Length,
+         Sepal.Shape=Sepal.Width/Sepal.Length)%>%
+  select(Species,Petal.Shape,Sepal.Shape)
 
+iris%>%
+  mutate(Petal.Long=Petal.Length>5)%>%
+  group_by(Species,Petal.Long)%>%
+  summarise(Mean.Petal.Length=mean(Petal.Length),
+             n.Petals=length(Petal.Length),
+             sd.Petal.Length=sd(Petal.Length),
+             SE.Petal.Length=sd(Petal.Length)/sqrt(length(Petal.Length)))
 
-###
+#Gestion de Factores
+#----FORCATS----#
+#factor()
+#as_factor()
+#fct_recode()
+library(forcats)
+datos_salud <- read_excel("./Clase 4/Datos_salud.xlsx",sheet=1,col_names=T)
+str(datos_salud)
+class(datos_salud$Enfermedad)
+levels(datos_salud$Esalud)
+datos_salud$Esalud <- as.factor(datos_salud$Esalud)
+levels(datos_salud$Esalud)
+
+datos_salud$Enfermedad<-factor(datos_salud$Enfermedad)
+class(datos_salud$Enfermedad)
+levels(datos_salud$Enfermedad)
+datos_salud$Sexo<-fct_recode(datos_salud$Sexo,
+                             Varon="Masculino",
+                             Mujer="Femenino")
+levels(datos_salud$Sexo)
+fct_count(datos_salud$Sexo)
+which(is.na(datos_salud$Civil)==TRUE)
+datos_salud$Civil[8]
+
 # trabajar con fechas---------
-
 # convierto de character >>> Date
-
-navidad <-  as.Date("2018-12-25")
+navidad <- as.Date("2018-12-25")
 navidad
 class(navidad)
+fecha1 <- as.character(navidad)
+class(fecha1)
+
+Sys.Date()
+
+dia1 <- as.Date("25/12/2017", format = "%d/%m/%Y")
+dia2 <- as.Date("20/01/2019", format = "%d/%m/%Y")
+dia2 -dia1
+class(dia1)
+
+difftime(dia2,dia1,units="weeks")
+difftime(dia2,dia1,units="days")
+difftime(dia2,dia1,units="hours")
+difftime(dia2,dia1,units="mins")
+difftime(dia2,dia1,units="secs")
+
+seq(dia1,dia2,length=100)
+
+fh1 <- as.POSIXct("01/10/1983 22:10:00",
+                  format = "%d/%m/%Y %H:%M:%S",
+                  tz = "America/Argentina/Buenos_Aires" )
+fh1
+fh2 <- as.POSIXct("04/12/1985 10:30:00",
+                  format = "%d/%m/%Y %H:%M:%S",
+                  tz = "America/Argentina/Buenos_Aires" )
+fh2
+difftime(fh2, fh1, units="days")/365
+
+#Trabajar con fechas
+##Por deafult R toma año/mes/día
+
+fecha1 <- as.Date("1914-07-28")
+fecha2 <- as.Date("1918-11-11")
+as.character(fecha1,format="%A")
+as.character(fecha2,format="%A")
+difftime(fecha2,fecha1,units="days")
+difftime(fecha2,fecha1,units="weeks")
+
+fecha1 <- as.Date("1914/07/28")
+fecha2 <- as.Date("1918/11/11")
+as.character(fecha1,format="%A")
+as.character(fecha2,format="%A")
+difftime(fecha2,fecha1,units="days")
+difftime(fecha2,fecha1,units="weeks")
+
+
+#----------------------------------------------------------------------#
+#----------------------------------------------------------------------#
+#----------------------------------------------------------------------#
+###
 
 # usando otros formatos
 # format() usa otros formatos para codificar fechas
@@ -441,5 +551,18 @@ levels(Datos_salud$Comor_agrupadas)
 
 ### FIN del SCRIPT###
 
+fh1 <- as.Date("1914/07/28")
+fh2 <- as.Date("1918/11/11")
+
+as.character(fh1,format="%A")
+as.character(fh2,format="%A")
+difftime(fh2,fh1,units = "days")
+difftime(fh2,fh1,units="weeks")
+
+birth <- as.Date("1992-10-05")
+actual <- Sys.Date()
+
+Edad_calc <-difftime(actual,birth,units="days")/365
+Edad_calc
 
 
