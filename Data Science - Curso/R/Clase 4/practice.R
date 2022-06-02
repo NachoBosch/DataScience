@@ -99,3 +99,7 @@ survivor <- c(titanic$Survived)
 cor.test(titanic$Pclass,survivor,method="spearman") #nos da un p valor menor a 0.05 lo cual rechazamos la H0 de que no existe correlacion
 #existe correlacion negativa entre las clases y los sobrevivientes (esto se puede corroborar graficamente mas arriba)
 
+
+x <-seq(from=-1000000,to=1000000)
+z.test(x=x,y=NULL,alternative="two.sided",mu=0,sigma.x=sd(x),sigma.y=NULL,conf.level=0.95)
+
