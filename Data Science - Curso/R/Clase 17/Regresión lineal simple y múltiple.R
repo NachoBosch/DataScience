@@ -8,15 +8,15 @@ library(car)
 ###########################################
 
 # Usamos el dataset mtcars ya incluido en R
+
 datos <- mtcars
-str(datos)
 
 # Nombre de las columnas
 names(datos)
-
 # Eliminamos variables que no son útiles para el ejercicio (que no son contínuas)
+
 datos <- select(datos, -c(am, vs, cyl, gear, carb))
-str(datos)
+
 # Nos quedan 6 variables: 1) millas por galón (consumo), 2) desplazamiento (
 # una medida de potencia del motor), 3) hp (potenica), 4) wt (peso)
 # 5) qsec (aceleración)
@@ -25,13 +25,6 @@ str(datos)
 
 ggpairs(datos, lower = list(continuous = "smooth"),
         diag = list(continuous = "bar"), axisLabels = "none")
-
-
-plot(mtcars$mpg,mtcars$wt)
-plot(mtcars$qsec,mtcars$hp)
-plot(mtcars$mpg,mtcars$hp)
-plot(mtcars$hp,mtcars$qsec)
-
 
 # En esta clase vamos a realizar un modelo de regresión lineal simple, con
 # una sola varibale explicativa.
@@ -45,22 +38,13 @@ plot(mtcars$hp,mtcars$qsec)
 
                 
 cor(datos$mpg,datos$wt)
-cor(mtcars$qsec,mtcars$hp)
-cor(mtcars$mpg,mtcars$hp)
-cor(mtcars$hp,mtcars$qsec)
+
 
 # -0.867. Es una relación inversamente proporcional. Vamos a chequear si
 # es estadísticamente significativa
 
 cor.test(datos$mpg,datos$wt)
-cor.test(mtcars$qsec,mtcars$hp)
-cor.test(mtcars$mpg,mtcars$hp)
-cor.test(mtcars$hp,mtcars$qsec,method='pearson')
-#Correlacion = 0--> H0=0 p<0.05 --> H1 si hay correlacion
-# -1 (cor inversa) 0(no hay) +1(cor directa)
-#asumiendo que ambos datos tienen dist normal
-cor.test(mtcars$mpg,mtcars$hp,method = 'spearman')
-cor.test(mtcars$mpg,mtcars$hp,method = 'kendall')
+
 # Observamos un p value muy bajo, entonces podemos sostenar que el coeficiente 
 # de correlación r es distinto de cero
 # Analicemos si estas variables presentan distribución normal (uno de los su-
@@ -69,16 +53,6 @@ cor.test(mtcars$mpg,mtcars$hp,method = 'kendall')
 shapiro.test(datos$mpg)
 shapiro.test(datos$wt)
 
-shapiro.test(mtcars$qsec)
-shapiro.test(mtcars$hp)
-
-
-shapiro.test(mtcars$mpg)
-shapiro.test(mtcars$hp)
-
-shapiro.test(mtcars$hp)#p<0.05 no es normal
-shapiro.test(mtcars$qsec)# p>0.05 si es normal
-
 # En ningún caso podemos rechazar la hiótesis nula, por lo tanto, cumplimos con
 # los supuestos
 
@@ -86,15 +60,9 @@ shapiro.test(mtcars$qsec)# p>0.05 si es normal
 # tados
 
 
-modelolineal = lm(hp~qsec, data =datos)# hp explica 50% del qsec
+modelolineal = lm(mpg~wt, data =datos)
 summary(modelolineal)
 
-
-modelolineal = lm(hp~qsec, data =datos)
-summary(modelolineal)
-
-modelolineal = lm(hp~mpg, data =datos)
-summary(modelolineal)
 # Validación del modelo
   # 1) Ambos coeficientes son significativos
   # 2) el modelo es globalmente significativo
@@ -135,9 +103,6 @@ dwt(modelolineal, alternative = "two.sided")
 nuevos = data.frame ( wt = c(2.5, 2.9)) 
 predict(modelolineal, nuevos)
 
-plot(mtcars$mpg,mtcars$wt)
-grafico1 = ggplot(mtcars,aes(mpg,wt))
-grafico1 + geom_point()+geom_smooth(method="lm",colour="red")
 
 
 
@@ -146,3 +111,116 @@ grafico1 + geom_point()+geom_smooth(method="lm",colour="red")
 ###########################################
 ###              Clase 2                ### 
 ###########################################
+
+
+library(mlbench)
+library(MASS)
+
+# Repasamos de la clase pasada, armamos el modelo con una variables y analizamos
+# la salida
+
+
+modelolineal = lm(mpg~wt, data =datos)
+summary(modelolineal)
+
+# Nos enfocamos en R2
+
+summary(modelolineal)$r.squared
+summary(modelolineal)$adj.r.squared
+
+# Comenzamos con la regresión multiple
+# Entrenamosun modelo que incluya a todas la variables:
+
+
+modelolineal2 = lm(mpg~wt+disp+hp+drat+wt+qsec, data =datos)
+summary(modelolineal2)
+
+# Como vemos en esto modelo, la única variables significativa es el peso, por lo
+# tanto, el modelo original es el mejor que tenemos
+
+#Cambiamos de dataset
+
+BostonHousing <- read.csv(file = "https://raw.githubusercontent.com/selva86/datasets/master/BostonHousing.csv")
+dim(BostonHousing)
+head(BostonHousing)
+
+# Correlmos modelo para predecir la mediana del valor del metro cuad,
+# con la tasa de crimen como variables explicativa
+
+modelocasas = lm(medv~crim,data=BostonHousing)
+summary(modelocasas)
+
+# Corremos modelos con todas las variables
+
+
+modelocasas2 = lm(medv~.,data=BostonHousing)
+summary(modelocasas2)
+
+# Como podemos saber cual modelo es mejor?
+# Vamos a calcular R2ajust, AIC y BIC para los dos modelos y analizar
+
+AIC(modelocasas)
+AIC(modelocasas2)
+
+BIC(modelocasas)
+BIC(modelocasas2)
+
+summary(modelocasas)$adj.r.squared
+summary(modelocasas2)$adj.r.squared
+
+# Utilizamos stepwise
+
+modelo.pasos <- stepAIC(modelocasas2, direction = "both", 
+                      trace = TRUE)
+summary(modelo.pasos)
+
+# Para practicar, analicemos el dataset swiss:
+
+summary(swiss)
+
+datos <- select(datos, -c(am, vs, cyl, gear, carb))
+str(datos)
+# Nos quedan 6 variables: 1) millas por galón (consumo), 2) desplazamiento (
+# una medida de potencia del motor), 3) hp (potenica), 4) wt (peso)
+# 5) qsec (aceleración)
+
+### REGRESION LINEAL SIMPLE ###
+
+s <- swiss
+str(s)
+ggpairs(s, lower = list(continuous = "smooth"),
+        diag = list(continuous = "bar"), axisLabels = "none")
+plot(s$Fertility,s$Education)
+# Analizar correlación entre variables
+shapiro.test(s$Fertility)
+shapiro.test(s$Education)
+cor(s$Fertility,s$Education)
+cor.test(s$Fertility,s$Education)
+# Realizar modelo con la variable con mayor correlación
+modelolineal = lm(Fertility~Education, data = s)# hp explica 50% del qsec
+summary(modelolineal)
+
+### REGRESION LINEAL MULTIPLE ###
+# Realizar modelo con todas las variables
+modelolineal2 = lm(Fertility~Education+Catholic+Agriculture+Examination+Infant.Mortality, data = s)
+summary(modelolineal2)
+
+# Comparar modelos utilizando BIC
+AIC(modelolineal)
+AIC(modelolineal2)
+
+BIC(modelolineal)
+BIC(modelolineal2)
+
+summary(modelolineal)$adj.r.squared
+summary(modelolineal2)$adj.r.squared
+
+# Aplicar stepwise
+modelofinal <- stepAIC(modelolineal2, direction = "both", trace = TRUE)
+summary(modelofinal)
+
+############
+modelolineal3 = lm(Fertility~Education+Catholic+Infant.Mortality, data = s)
+summary(modelolineal3)
+
+
