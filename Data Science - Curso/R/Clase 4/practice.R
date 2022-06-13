@@ -3,7 +3,7 @@
 
 #Buscamos datasets para practicar --> ?data()
 #Cargamos el dataset
-titanic <- read.csv("./titanic/train.csv",)
+titanic <- read.csv("./Clase 4/titanic/train.csv")
 str(titanic)
 names(titanic)#Nombre de las columnas
 length(titanic)#Cantidad de columnas
@@ -103,3 +103,56 @@ cor.test(titanic$Pclass,survivor,method="spearman") #nos da un p valor menor a 0
 x <-seq(from=-1000000,to=1000000)
 z.test(x=x,y=NULL,alternative="two.sided",mu=0,sigma.x=sd(x),sigma.y=NULL,conf.level=0.95)
 
+## Linear regression ##
+library(dplyr)
+library(GGally)
+library(lmtest)
+library(car)
+
+datos_titanic <- select(titanic,c(Age,Fare))
+str(datos_titanic)
+ggpairs(datos_titanic, lower = list(continuous = "smooth"),
+        diag = list(continuous = "bar"), axisLabels = "none")
+plot(datos_titanic$Age,datos_titanic$Fare)
+cor(datos_titanic$Age,datos_titanic$Fare)
+cor.test(datos_titanic$Age,datos_titanic$Fare)
+shapiro.test(datos_titanic$Age)
+shapiro.test(datos_titanic$Fare)
+
+modelolineal = lm(Age~Fare, data =datos_titanic)
+summary(modelolineal)
+
+
+
+##################################
+######## Unployee Dataset ########
+##################################
+
+unp <- read.csv("https://raw.githubusercontent.com/amankharwal/Website-data/master/unemployment.csv")
+names(unp)
+str(unp)
+
+##transform data
+unp$Region <- as.factor(unp$Region)
+unp$Date <- as.Date(unp$Date,format="%d-%m-%y")
+unp$Frequency <- as.factor(unp$Frequency)
+unp$Region.1 <- as.factor(unp$Region.1)
+str(unp)
+
+#EDA
+a<-ggplot(data=unp)
+a+geom_bar(aes(Region.1))
+a+geom_count(aes(Region.1,longitude))
+data_unp <- select(unp,-c(Region,Date,Frequency,Region.1))
+ggpairs(data_unp, lower = list(continuous = "smooth"),
+        diag = list(continuous = "bar"), axisLabels = "none")
+
+#Modelo regresion
+plot(unp$latitude,unp$Estimated.Labour.Participation.Rate....)
+shapiro.test(unp$latitude)
+shapiro.test(unp$Estimated.Labour.Participation.Rate....)
+cor.test(unp$latitude,unp$Estimated.Labour.Participation.Rate....,method = "spearman")
+cor.test(unp$latitude,unp$Estimated.Labour.Participation.Rate....)
+
+modelolineal = lm(unp$latitude~unp$Estimated.Labour.Participation.Rate....,data=unp)
+summary(modelolineal)
