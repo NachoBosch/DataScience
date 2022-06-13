@@ -67,7 +67,7 @@ a+geom_count(aes(Survived,Pclass))
 # Hacemos una exploración mediante estadísticos descriptivos
 tabla<-table(titanic$Survived,titanic$Pclass)#construyo table de contigencia
 library(MASS)
-cov(tabla$)
+cov(tabla)
 tabla
 range(titanic$Age)
 min(titanic$Age)
