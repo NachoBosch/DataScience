@@ -123,8 +123,9 @@ bptest(modelolineal)
       # para sostener que la varianza no es homogenea
 
       # 4) Autocorrelación
-dwt(modelolineal, alternative = "two.sided")
+dwt(modelolineal, alternative = "two.sided")#Durbin Watson
       # rechazamos H0, no hay autocorrelación entre los residuos.
+      # esto significa que no hay valor de residuo que condiciones a los residuos cercanos.
 
 # Una vez que sabemos que nuestro modelo y significativo y válido,
 # Hagamos una predicción para cerrar
