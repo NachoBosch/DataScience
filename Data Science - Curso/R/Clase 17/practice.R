@@ -102,3 +102,22 @@ summary(modelolineal)$adj.r.squared
 
 modelo.pasos <- stepAIC(modelotutti, direction = "both",trace = TRUE)
 summary(modelo.pasos)
+
+
+
+####################################################
+################## Cars Price ######################
+####################################################
+pc <- read.csv('https://raw.githubusercontent.com/amankharwal/Website-data/master/CarPrice.csv')
+str(pc)
+pcars <- select(pc,-c(fuelsystem,cylindernumber,enginetype,enginelocation,drivewheel,carbody,
+                      doornumber,aspiration,fueltype,CarName))
+ggpairs(pcars, lower = list(continuous = "smooth"),
+        diag = list(continuous = "bar"), axisLabels = "none")
+cor.test(pcars$citympg,pcars$highwaympg)
+shapiro.test(pcars$citympg)
+shapiro.test(pcars$highwaympg)
+a <- ggplot(pcars)
+a+geom_histogram(aes(pcars$citympg))
+shapiro.test(pcars$enginesize)
+
